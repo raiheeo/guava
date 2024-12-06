@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from .models import UserProfile, Product, ProductPhoto, Category, Review, Rating
 from .models import Product
 from .serializers import (
@@ -6,6 +7,19 @@ from .serializers import (
 )
 from rest_framework import viewsets
 from .serializers import ProductListSerializer, ProductDetailSerializer
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.generics import ListAPIView
+from .models import Product
+from .serializers import ProductListSerializer
+from .filters import ProductFilter
+
+
+
+class ProductListView(ListAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductListSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ProductFilter
 
 
 class ProductListViewSet(viewsets.ModelViewSet):
@@ -22,8 +36,6 @@ class ProductListViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = Product.objects.all()
-
-
         queryset = queryset.select_related('owner', 'category')
         queryset = queryset.prefetch_related('photos')
 

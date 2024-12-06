@@ -1,13 +1,13 @@
 from django.urls import path
 from .views import *
-
+from django.conf import settings
 
 
 urlpatterns = [
     path('', ProductListViewSet.as_view({'get': 'list',
                                      'post': 'create'}), name='product_list'),
 
-    path('<int:pk>/', ProductDetailViewSet.as_view({'get': 'retrieve',
+    path('<int:pk>/', ProductListViewSet.as_view({'get': 'retrieve',
                                               'put': 'update',
                                               'delete': 'destroy'}), name='product_detail'),
 
@@ -21,7 +21,7 @@ urlpatterns = [
     path('user/<int:pk>/', UserProfileViewSet.as_view({'get': 'retrieve',
                                                    'put': 'update',
                                                    'delete': 'destroy'}), name='user_detail'),
+    path('products/', ProductListView.as_view(), name='product-list'),
 
 
 ]
-

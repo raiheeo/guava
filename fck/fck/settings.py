@@ -32,6 +32,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'guava',
+    'drf_yasg',
+    'rest_framework_swagger',
+    'django_filters',
 
 ]
 

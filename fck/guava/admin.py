@@ -2,16 +2,19 @@ from django.contrib import admin
 from .models import *
 from modeltranslation.admin import TranslationAdmin
 
+from .views import ProductListViewSet
+
 
 class ProductPhotoInline(admin.TabularInline):
     model = ProductPhoto
     extra = 1
 
-
 admin.site.register(UserProfile)
+admin.site.register(ProductPhoto)
 admin.site.register(Category)
-admin.site.register(Rating)
 admin.site.register(Review)
+admin.site.register(Rating)
+
 
 
 @admin.register(Product)

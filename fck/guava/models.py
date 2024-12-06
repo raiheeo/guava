@@ -30,7 +30,7 @@ class Category(models.Model):
 
 class Product(models.Model):
     product_name = models.CharField(max_length=34)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
     description = models.TextField()
     price = models.PositiveIntegerField()
     check_original = models.BooleanField(default=True)
@@ -40,6 +40,24 @@ class Product(models.Model):
 
     def __str__(self):
         return self.product_name
+
+    def get_avg_rating(self):
+        rating = self.ratings.all()
+        if rating.exists():
+            return  round(sum(i.stars for i in rating) / rating.count, 1)
+        return 0
+
+
+    def get_count_people(self):
+        rating =self.ratings.all()
+        if rating.exists():
+            return rating.count()
+        return 0
+
+class Rating(models.Model):
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='ratings')
+    stars = models.PositiveSmallIntegerField(choices=[(i, str(i)) for i in range(1, 6)])
 
 
 class ProductPhoto(models.Model):
@@ -52,7 +70,7 @@ class ProductPhoto(models.Model):
 
 class Rating(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='ratings')
     stars = models.PositiveSmallIntegerField(choices=[(i, str(i)) for i in range(1, 6)])
 
     def __str__(self):
@@ -60,7 +78,7 @@ class Rating(models.Model):
 
 class Review(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
     text = models.TextField()
     date = models.DateTimeField(auto_now_add=True)
 
