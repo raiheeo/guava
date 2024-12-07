@@ -47,7 +47,6 @@ class Product(models.Model):
             return  round(sum(i.stars for i in rating) / rating.count, 1)
         return 0
 
-
     def get_count_people(self):
         rating =self.ratings.all()
         if rating.exists():

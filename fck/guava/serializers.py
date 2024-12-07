@@ -26,6 +26,13 @@ class CategorySimpleSerializer(serializers.ModelSerializer):
 
 
 
+def get_avg_rating(self,obj):
+    return obj.get_avg_rating()
+
+def get_count_people(self, obj):
+    return obj.get_count_people
+
+
 class ProductListSerializer(serializers.ModelSerializer):
     owner = UserProfileSerializer()
     photos = ProductPhotoSerializer(many=True, read_only=True)
@@ -41,11 +48,6 @@ class ProductListSerializer(serializers.ModelSerializer):
         fields = ['id', 'photos',  'product_name', 'price', 'owner', 'get_avg_rating', 'get_count_people']
 
 
-    def get_avg_rating(self,obj):
-        return obj.get_avg_rating()
-
-    def get_count_people(self, obj):
-        return obj.get_count_people
 
 class CategorySerializer(serializers.ModelSerializer):
     products = ProductListSerializer(many=True, read_only=True)

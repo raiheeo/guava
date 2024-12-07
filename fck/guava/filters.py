@@ -1,6 +1,7 @@
 import django_filters
 from .models import Product
 
+
 class ProductFilter(django_filters.FilterSet):
     category = django_filters.CharFilter(field_name='category__category_name', lookup_expr='icontains')
     price = django_filters.RangeFilter()
@@ -16,4 +17,8 @@ class ProductFilter(django_filters.FilterSet):
 
     class Meta:
         model = Product
-        fields = ['category', 'price', 'created_date']
+        fields = {
+            'product_name': ['exact'],
+            'created_date': ['gt', 'lt'],
+            'price': ['gt', 'lt']
+        }
