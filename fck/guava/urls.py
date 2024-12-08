@@ -22,6 +22,9 @@ urlpatterns = [
                                                    'put': 'update',
                                                    'delete': 'destroy'}), name='user_detail'),
     path('products/', ProductListView.as_view(), name='product-list'),
-
-
+    path('cart/', CartViewSet.as_view({'get': 'list',
+                                              'post': 'create'}), name='user_list'),
+    path('cart/<int:pk>/', CartItemViewSet.as_view({'get': 'retrieve',
+                                                       'put': 'update',
+                                                       'delete': 'destroy'}), name='user_detail'),
 ]

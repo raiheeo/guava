@@ -1,13 +1,18 @@
 from django.db import models
+from django.contrib.auth.models import User
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth import authenticate
+from phonenumber_field.modelfields import PhoneNumberField
 
 
 
 class UserProfile(models.Model):
+    objects = None
     first_name = models.CharField(max_length=32)
     last_name = models.CharField(max_length=32)
     user_image = models.ImageField(upload_to='user_image/')
     age = models.PositiveSmallIntegerField(verbose_name='age')
-    phone_number = models.CharField(max_length=15)
+    phone_number = PhoneNumberField(null=True, blank=True, region='KZ')
     register_date = models.DateTimeField(auto_now_add=True)
     STATUS_CHOICES = (
         ('gold', 'gold'),
@@ -42,13 +47,13 @@ class Product(models.Model):
         return self.product_name
 
     def get_avg_rating(self):
-        rating = self.ratings.all()
+        rating = self.get_avg_rating().all()
         if rating.exists():
             return  round(sum(i.stars for i in rating) / rating.count, 1)
         return 0
 
     def get_count_people(self):
-        rating =self.ratings.all()
+        rating =self.get_count_people().all()
         if rating.exists():
             return rating.count()
         return 0
@@ -85,7 +90,47 @@ class Review(models.Model):
         return f'{self.user}, {self.product}'
 
 
+class Cart(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(args, kwargs)
+        self.id = None
+
+    def total_price(self):
+        return sum(item.total_price() for item in self.items.all())
+
+    def __str__(self):
+        return f"Cart {self.id}"
+
+def total_price(self):
+    total = sum(item.total_price() for item in self.items.all())
+    discount = self.get_discount()
+    return total * (1 - discount)
 
 
+def get_discount(self):
+    discounts = {
+        'gold': 0.75,
+        'silver': 0.5,
+        'bronze': 0.25,
+        'simple': 0,
+    }
+    return discounts.get(self.status, 0)
 
+
+def __str__(self):
+    return f"Cart {self.id}"
+
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, related_name='items', on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+
+    def total_price(self):
+        return self.product.price * self.quantity
+
+    def __str__(self):
+        return f"{self.quantity} x {self.product.name}"
 
